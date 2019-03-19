@@ -41,7 +41,7 @@ class PTBTokenizer:
         # ======================================================
         path_to_jar_dirname=os.path.dirname(os.path.abspath(__file__))
         tmp_file = tempfile.NamedTemporaryFile(delete=False, dir=path_to_jar_dirname)
-        tmp_file.write(sentences)
+        tmp_file.write(bytes(sentences, encoding="ascii"))
         tmp_file.close()
 
         # ======================================================
@@ -51,7 +51,7 @@ class PTBTokenizer:
         p_tokenizer = subprocess.Popen(cmd, cwd=path_to_jar_dirname, \
                 stdout=subprocess.PIPE)
         token_lines = p_tokenizer.communicate(input=sentences.rstrip())[0]
-        lines = token_lines.split('\n')
+        lines = token_lines.split(b'\n')
         # remove temp file
         os.remove(tmp_file.name)
 
@@ -61,7 +61,7 @@ class PTBTokenizer:
         for k, line in zip(image_id, lines):
             if not k in final_tokenized_captions_for_image:
                 final_tokenized_captions_for_image[k] = []
-            tokenized_caption = ' '.join([w for w in line.rstrip().split(' ') \
+            tokenized_caption = b' '.join([w for w in line.rstrip().split(b' ') \
                     if w not in PUNCTUATIONS])
             final_tokenized_captions_for_image[k].append(tokenized_caption)
 
